@@ -45,4 +45,10 @@
 		position={Position.Right}
 		class="h-4 rounded-none border-none !bg-teal-500"
 	/>
+	<Handle type="target" position={Position.Top} class="w-4 rounded-none border-none !bg-teal-500" />
+	<Handle
+		type="source"
+		position={Position.Bottom}
+		class="w-4 rounded-none border-none !bg-teal-500"
+	/>
 </div>

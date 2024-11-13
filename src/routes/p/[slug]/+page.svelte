@@ -1,52 +1,39 @@
 <script lang="ts">
+	import type { PageData } from './$types';
 	import {
-		SvelteFlow,
 		Background,
+		ConnectionLineType,
 		Controls,
+		type Edge,
 		type Node,
 		type NodeTypes,
-		type Edge,
-		MarkerType
+		SvelteFlow
 	} from '@xyflow/svelte';
 	import '@xyflow/svelte/dist/style.css';
 	import { writable } from 'svelte/store';
 	import Person from '$lib/component/pamily/Person.svelte';
+	import { onMount } from 'svelte';
+	import { getLayoutedElements } from '$lib/layout';
+
+	let { data }: { data: PageData } = $props();
 
 	const nodeTypes: NodeTypes = {
 		person: Person
 	};
-	const nodes = writable<Node[]>([
-		{
-			id: '1',
-			position: { x: 0, y: 0 },
-			type: 'person',
-			data: {
-				name: 'Reijhanniel',
-				dob: new Date('1995-06-01')
-			}
-		},
-		{
-			id: '2',
-			position: { x: 400, y: 0 },
-			type: 'person',
-			data: {
-				name: 'Clara',
-				dob: new Date('1995-04-24')
-			}
-		}
-	]);
-	const edges = writable<Edge[]>([
-		{
-			id: '1-2',
-			source: '1',
-			target: '2',
-			label: 'jowa',
-			animated: true,
-			markerEnd: {
-				type: MarkerType.Arrow
-			}
-		}
-	]);
+	const nodes = writable<Node[]>([]);
+	const edges = writable<Edge[]>([]);
+
+	onMount(() => {
+		const _nodes = data.nodes || [];
+		const _edges = data.edges || [];
+		const layouted = getLayoutedElements(_nodes, _edges, {
+			nodeWidth: 130,
+			nodeHeight: 400,
+			direction: 'TB',
+		});
+		$nodes = layouted.nodes;
+		$edges = layouted.edges;
+	});
 </script>
 
 <main class="h-screen">
@@ -55,6 +42,8 @@
 		{edges}
 		{nodeTypes}
 		fitView
+		connectionLineType={ConnectionLineType.SmoothStep}
+		defaultEdgeOptions={{ type: 'smoothstep', animated: true }}
 		on:nodeclick={({ detail }) => console.log(detail)}
 	>
 		<Background />
