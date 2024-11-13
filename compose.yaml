@@ -1,0 +1,26 @@
+services:
+  postgres:
+    container_name: pamily_postgres
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=supersecret
+      - POSTGRES_DB=pamily
+    ports:
+      - '5432:5432'
+    restart: always
+    volumes:
+      - ./docker/postgresql/data:/var/lib/postgresql/data
+
+  pgui:
+    container_name: pamily_pgweb
+    image: sosedoff/pgweb:latest
+    ports:
+      - '5433:8081'
+    restart: always
+    links:
+      - postgres:postgres
+    environment:
+      - PGWEB_DATABASE_URL=postgres://postgres:supersecret@postgres:5432/pamily?sslmode=disable
+    depends_on:
+      - postgres
