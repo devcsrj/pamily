@@ -27,11 +27,10 @@ export const family = pgTable('family', {
 	updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow()
 });
 
-export const familyTree = pgTable('family_tree', {
-	id: serial('id').primaryKey(),
-	familyId: integer('family_id')
-		.notNull()
-		.references(() => family.id, { onDelete: 'cascade' }),
-	personId: integer('person_id').notNull(),
-	path: ltree('path').notNull().unique()
+export const lineage = pgTable('lineage', {
+	personId: integer('person_id').notNull().references(() => person.id),
+	maternalPath: ltree('maternal_path'),
+	paternalPath: ltree('paternal_path'),
+	motherId: integer('mother_id').references(() => person.id),
+	fatherId: integer('father_id').references(() => person.id),
 });
