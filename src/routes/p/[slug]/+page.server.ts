@@ -29,7 +29,7 @@ export const load: PageServerLoad = async ({ params }) => {
 				id: '1-2',
 				source: '1',
 				target: '2',
-				label: 'jowa',
+				label: 'jowa'
 			}
 		]
 	};

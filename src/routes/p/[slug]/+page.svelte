@@ -29,7 +29,7 @@
 		const layouted = getLayoutedElements(_nodes, _edges, {
 			nodeWidth: 130,
 			nodeHeight: 400,
-			direction: 'TB',
+			direction: 'TB'
 		});
 		$nodes = layouted.nodes;
 		$edges = layouted.edges;
