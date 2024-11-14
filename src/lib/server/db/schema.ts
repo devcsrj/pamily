@@ -1,4 +1,4 @@
-import { pgTable, customType, date, integer, varchar, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, customType, date, integer, varchar, timestamp, serial } from 'drizzle-orm/pg-core';
 
 const ltree = customType<{ data: string }>({
 	dataType() {
@@ -7,7 +7,7 @@ const ltree = customType<{ data: string }>({
 });
 
 export const person = pgTable('person', {
-	id: integer('id').primaryKey().generatedByDefaultAsIdentity(),
+	id: serial('id').primaryKey(),
 	firstName: varchar('first_name').notNull(),
 	lastName: varchar('last_name').notNull(),
 	dateOfBirth: date('date_of_birth').notNull(),
@@ -20,7 +20,7 @@ export const person = pgTable('person', {
 });
 
 export const family = pgTable('family', {
-	id: integer('id').primaryKey().generatedByDefaultAsIdentity(),
+	id: serial('id').primaryKey(),
 	slug: varchar('slug').notNull(),
 	name: varchar('name').notNull(),
 	createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
@@ -28,7 +28,7 @@ export const family = pgTable('family', {
 });
 
 export const familyTree = pgTable('family_tree', {
-	id: integer('id').primaryKey().generatedByDefaultAsIdentity(),
+	id: serial('id').primaryKey(),
 	familyId: integer('family_id')
 		.notNull()
 		.references(() => family.id, { onDelete: 'cascade' }),
