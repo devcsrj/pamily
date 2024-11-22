@@ -1,10 +1,11 @@
 import { index, sqliteTable, text, unique } from 'drizzle-orm/sqlite-core';
+import { sql } from 'drizzle-orm';
 
 export const nodes = sqliteTable(
 	'nodes',
 	{
 		id: text('id')
-			.generatedAlwaysAs('(json_extract(data, "$.id"))', {
+			.generatedAlwaysAs(sql`(json_extract(data, "$.id"))`, {
 				mode: 'virtual'
 			})
 			.notNull()
@@ -21,8 +22,12 @@ export const nodes = sqliteTable(
 export const edges = sqliteTable(
 	'edges',
 	{
-		source: text('source').references(() => nodes.id),
-		target: text('target').references(() => nodes.id),
+		source: text('source')
+			.notNull()
+			.references(() => nodes.id),
+		target: text('target')
+			.notNull()
+			.references(() => nodes.id),
 		properties: text('properties')
 	},
 	(table) => {

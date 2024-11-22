@@ -3,6 +3,7 @@
 	import {
 		Background,
 		ConnectionLineType,
+		ConnectionMode,
 		Controls,
 		type Edge,
 		type Node,
@@ -17,22 +18,30 @@
 
 	let { data }: { data: PageData } = $props();
 
+	const people = $derived(data.people);
+	const relationships = $derived(data.relationships);
+
 	const nodeTypes: NodeTypes = {
 		person: Person
 	};
 	const nodes = writable<Node[]>([]);
 	const edges = writable<Edge[]>([]);
 
-	onMount(() => {
-		const _nodes = data.nodes || [];
-		const _edges = data.edges || [];
-		const layouted = getLayoutedElements(_nodes, _edges, {
-			nodeWidth: 130,
-			nodeHeight: 400,
-			direction: 'TB'
-		});
-		$nodes = layouted.nodes;
-		$edges = layouted.edges;
+	$effect(() => {
+		const _nodes = people.map((person) => ({
+			id: person.id,
+			position: { x: 0, y: 0 },
+			type: 'person',
+			data: person
+		}));
+		nodes.set(_nodes);
+
+		const _edges = relationships.map(({ source, target }) => ({
+			id: `${source}-${target}`,
+			source,
+			target
+		}));
+		edges.set(_edges);
 	});
 </script>
 
@@ -42,8 +51,9 @@
 		{edges}
 		{nodeTypes}
 		fitView
+		connectionMode={ConnectionMode.Loose}
 		connectionLineType={ConnectionLineType.SmoothStep}
-		defaultEdgeOptions={{ type: 'smoothstep', animated: true }}
+		defaultEdgeOptions={{ type: 'smoothstep' }}
 		on:nodeclick={({ detail }) => console.log(detail)}
 	>
 		<Background />

@@ -1,36 +1,14 @@
 import type { PageServerLoad } from './$types';
+import { getLineageService } from '$lib/server/service';
 
 export const ssr = false;
 
 export const load: PageServerLoad = async ({ params }) => {
+	const familyId = params.slug;
+	const service = getLineageService();
+
 	return {
-		nodes: [
-			{
-				id: '1',
-				position: { x: 0, y: 0 },
-				type: 'person',
-				data: {
-					name: 'Reijhanniel',
-					dob: new Date('1995-06-01')
-				}
-			},
-			{
-				id: '2',
-				position: { x: 0, y: 0 },
-				type: 'person',
-				data: {
-					name: 'Clara',
-					dob: new Date('1995-04-24')
-				}
-			}
-		],
-		edges: [
-			{
-				id: '1-2',
-				source: '1',
-				target: '2',
-				label: 'jowa'
-			}
-		]
+		people: await service.getPeople(familyId),
+		relationships: await service.getRelationships(familyId)
 	};
 };
