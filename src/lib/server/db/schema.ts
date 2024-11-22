@@ -1,36 +1,36 @@
-import { pgTable, customType, date, integer, varchar, timestamp, serial } from 'drizzle-orm/pg-core';
+import { index, sqliteTable, text, unique } from 'drizzle-orm/sqlite-core';
 
-const ltree = customType<{ data: string }>({
-	dataType() {
-		return 'ltree';
+export const nodes = sqliteTable(
+	'nodes',
+	{
+		id: text('id')
+			.generatedAlwaysAs('(json_extract(data, "$.id"))', {
+				mode: 'virtual'
+			})
+			.notNull()
+			.unique(),
+		body: text('data').notNull()
+	},
+	(table) => {
+		return {
+			idIndex: index('idx_id').on(table.id)
+		};
 	}
-});
+);
 
-export const person = pgTable('person', {
-	id: serial('id').primaryKey(),
-	firstName: varchar('first_name').notNull(),
-	lastName: varchar('last_name').notNull(),
-	dateOfBirth: date('date_of_birth').notNull(),
-	dateOfDeath: date('date_of_death'),
-	facebookId: varchar('facebook_id'),
-	twitterId: varchar('twitter_id'),
-	instagramId: varchar('instagram_id'),
-	createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-	updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow()
-});
-
-export const family = pgTable('family', {
-	id: serial('id').primaryKey(),
-	slug: varchar('slug').notNull(),
-	name: varchar('name').notNull(),
-	createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-	updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow()
-});
-
-export const lineage = pgTable('lineage', {
-	personId: integer('person_id').notNull().references(() => person.id),
-	maternalPath: ltree('maternal_path'),
-	paternalPath: ltree('paternal_path'),
-	motherId: integer('mother_id').references(() => person.id),
-	fatherId: integer('father_id').references(() => person.id),
-});
+export const edges = sqliteTable(
+	'edges',
+	{
+		source: text('source').references(() => nodes.id),
+		target: text('target').references(() => nodes.id),
+		properties: text('properties')
+	},
+	(table) => {
+		return {
+			// Note: missing ON CONFLICT REPLACE
+			uniqueEdgeIndex: unique('idx_unique_edge').on(table.source, table.target, table.properties),
+			sourceIndex: index('idx_source').on(table.source),
+			targetIndex: index('idx_target').on(table.target)
+		};
+	}
+);
