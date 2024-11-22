@@ -6,8 +6,8 @@
 	import type { Person } from '$lib/types/person';
 
 	type Params = NodeTypes & {
-		data: Person;
 		type: 'person';
+		data: Person;
 	};
 
 	let { data }: Params = $props();

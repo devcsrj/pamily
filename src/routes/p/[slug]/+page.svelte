@@ -13,7 +13,9 @@
 	import '@xyflow/svelte/dist/style.css';
 	import { writable } from 'svelte/store';
 	import Person from '$lib/component/pamily/Person.svelte';
+	import { type Person as PersonDto } from '$lib/types/person';
 	import { TreeLayout } from '$lib/component/xyz/tree-layout';
+	import PersonModal from '$lib/component/pamily/PersonModal.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -27,12 +29,21 @@
 	const nodes = writable<Node[]>([]);
 	const edges = writable<Edge[]>([]);
 
+	let selectedPerson = $state<PersonDto | null>(null);
+	let showPersonModal = $state(false);
+
+	function onNodeClick(e: CustomEvent<{ node: Node<PersonDto>; e: PointerEvent; }>) {
+		selectedPerson = e.detail.node.data;
+		showPersonModal = true;
+	}
+
 	$effect(() => {
 		const _nodes = people.map((person) => ({
 			id: person.id,
-			position: { x: 0, y: 0 },
 			type: 'person',
-			data: person
+			position: { x: 0, y: 0 },
+			draggable: false,
+			data: person,
 		}));
 
 		const _edges = relationships.map(({ source, target }) => ({
@@ -61,10 +72,14 @@
 		fitView
 		connectionLineType={ConnectionLineType.Step}
 		defaultEdgeOptions={{ type: 'smoothstep' }}
-		on:nodeclick={({ detail }) => console.log(detail)}
+		on:nodeclick={(e) => onNodeClick(e)}
 	>
 		<MiniMap nodeStrokeWidth={3} />
 		<Background />
 		<Controls />
 	</SvelteFlow>
 </main>
+
+{#if selectedPerson}
+	<PersonModal person={selectedPerson} bind:show={showPersonModal}/>
+{/if}
