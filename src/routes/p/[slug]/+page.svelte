@@ -3,9 +3,9 @@
 	import {
 		Background,
 		ConnectionLineType,
-		ConnectionMode,
 		Controls,
 		type Edge,
+		MiniMap,
 		type Node,
 		type NodeTypes,
 		SvelteFlow
@@ -13,8 +13,7 @@
 	import '@xyflow/svelte/dist/style.css';
 	import { writable } from 'svelte/store';
 	import Person from '$lib/component/pamily/Person.svelte';
-	import { onMount } from 'svelte';
-	import { getLayoutedElements } from '$lib/layout';
+	import { TreeLayout } from '$lib/component/xyz/tree-layout';
 
 	let { data }: { data: PageData } = $props();
 
@@ -24,6 +23,7 @@
 	const nodeTypes: NodeTypes = {
 		person: Person
 	};
+
 	const nodes = writable<Node[]>([]);
 	const edges = writable<Edge[]>([]);
 
@@ -34,13 +34,21 @@
 			type: 'person',
 			data: person
 		}));
-		nodes.set(_nodes);
 
 		const _edges = relationships.map(({ source, target }) => ({
 			id: `${source}-${target}`,
 			source,
 			target
 		}));
+
+		const tree = new TreeLayout({
+			nodeHeight: 140,
+			nodeWidth: 300,
+			minSpacing: 120
+		});
+		tree.layout(_nodes, _edges);
+
+		nodes.set(_nodes);
 		edges.set(_edges);
 	});
 </script>
@@ -51,11 +59,11 @@
 		{edges}
 		{nodeTypes}
 		fitView
-		connectionMode={ConnectionMode.Loose}
-		connectionLineType={ConnectionLineType.SmoothStep}
+		connectionLineType={ConnectionLineType.Step}
 		defaultEdgeOptions={{ type: 'smoothstep' }}
 		on:nodeclick={({ detail }) => console.log(detail)}
 	>
+		<MiniMap nodeStrokeWidth={3} />
 		<Background />
 		<Controls />
 	</SvelteFlow>
