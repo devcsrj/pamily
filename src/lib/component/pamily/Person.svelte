@@ -33,7 +33,6 @@
 	<Handle
 		type="target"
 		position={Position.Top}
-		onconnect={(e) => console.log(e)}
 		class="!h-2 !w-6 !rounded-none !border-none !bg-teal-500"
 		id="parent"
 	/>
@@ -66,7 +65,6 @@
 	<Handle
 		type="source"
 		position={Position.Bottom}
-		onconnect={(e) => console.log(e)}
 		class="!h-2 !w-6 !rounded-none !border-none !bg-teal-500"
 		id="child"
 	/>

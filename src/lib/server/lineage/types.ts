@@ -2,6 +2,7 @@ import type { FamilyId, Relationship } from '$lib/types/family';
 import type { Person } from '$lib/types/person';
 
 export interface LineageService {
+	addParent(childId: string, parentId: string): Promise<Relationship>;
 	updatePerson(person: Person): Promise<void>;
 	getPersonById(id: string): Promise<Person | null>;
 	getPeople(familyId: FamilyId): Promise<Person[]>;

@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import {
 		Background,
+		type Connection,
 		ConnectionLineType,
 		Controls,
 		type Edge,
@@ -16,6 +17,7 @@
 	import { type Person as PersonDto } from '$lib/types/person';
 	import { TreeLayout } from '$lib/component/xyz/tree-layout';
 	import PersonDialog from '$lib/component/pamily/PersonDialog.svelte';
+	import type { Relationship } from '$lib/types/family';
 
 	let { data }: { data: PageData } = $props();
 
@@ -28,6 +30,11 @@
 
 	const nodes = writable<Node[]>([]);
 	const edges = writable<Edge[]>([]);
+	const tree = new TreeLayout({
+		nodeHeight: 200,
+		nodeWidth: 300,
+		minSpacing: 120
+	});
 
 	let selectedPerson = $state<PersonDto | null>(null);
 	let showPersonDialog = $state(false);
@@ -40,6 +47,14 @@
 		}
 
 		selectedPerson = e.detail.node.data;
+	}
+
+	async function onNodeConnect(connection: Connection) {
+		const childId = connection.target;
+		const parentId = connection.source;
+		await fetch(`/api/people/${childId}/parents/${parentId}`, {
+			method: 'PUT'
+		});
 	}
 
 	$effect(() => {
@@ -56,11 +71,6 @@
 			target
 		}));
 
-		const tree = new TreeLayout({
-			nodeHeight: 140,
-			nodeWidth: 300,
-			minSpacing: 120
-		});
 		tree.layout(_nodes, _edges);
 
 		nodes.set(_nodes);
@@ -76,6 +86,7 @@
 		fitView
 		connectionLineType={ConnectionLineType.Step}
 		defaultEdgeOptions={{ type: 'smoothstep' }}
+		onconnect={(e) => onNodeConnect(e)}
 		on:nodeclick={(e) => onNodeClick(e)}
 	>
 		<MiniMap nodeStrokeWidth={3} />
