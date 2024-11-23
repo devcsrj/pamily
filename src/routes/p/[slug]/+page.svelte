@@ -42,7 +42,6 @@
 			id: person.id,
 			type: 'person',
 			position: { x: 0, y: 0 },
-			draggable: false,
 			data: person
 		}));
 

@@ -26,9 +26,9 @@
 </script>
 
 <div
-	class="min-h-16 rounded-md border-2 border-stone-300 bg-white p-4 py-2 shadow-md hover:shadow-teal-200"
+	class="min-h-16 rounded-md border-2 border-stone-300 bg-white p-4 shadow-md hover:shadow-teal-200"
 >
-	<Handle type="target" position={Position.Top} class="w-4 rounded-none border-none !bg-teal-500" />
+	<Handle type="target" position={Position.Top} class="!w-6 !h-2 !rounded-none !border-none !bg-teal-500" />
 	<div class="flex">
 		<div class="flex items-center justify-center rounded-full bg-gray-100">
 			{#if !avatarUrl || noAvatar}
@@ -58,6 +58,6 @@
 	<Handle
 		type="source"
 		position={Position.Bottom}
-		class="w-4 rounded-none border-none !bg-teal-500"
+		class="!w-6 !h-2 !rounded-none !border-none !bg-teal-500"
 	/>
 </div>
