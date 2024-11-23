@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const personSchema = z.object({
 	id: z.string(),
 	name: z.string(),
+	avatarUrl: z.string().nullish(),
 	dateOfBirth: z.string().date(),
 	dateOfDeath: z.string().date().nullish(),
 	socials: z

@@ -15,7 +15,7 @@
 	import Person from '$lib/component/pamily/Person.svelte';
 	import { type Person as PersonDto } from '$lib/types/person';
 	import { TreeLayout } from '$lib/component/xyz/tree-layout';
-	import PersonModal from '$lib/component/pamily/PersonModal.svelte';
+	import PersonDialog from '$lib/component/pamily/PersonDialog.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -30,11 +30,11 @@
 	const edges = writable<Edge[]>([]);
 
 	let selectedPerson = $state<PersonDto | null>(null);
-	let showPersonModal = $state(false);
+	let showPersonDialog = $state(false);
 
-	function onNodeClick(e: CustomEvent<{ node: Node<PersonDto>; e: PointerEvent; }>) {
+	function onNodeClick(e: CustomEvent<{ node: Node<PersonDto>; e: PointerEvent }>) {
 		selectedPerson = e.detail.node.data;
-		showPersonModal = true;
+		showPersonDialog = true;
 	}
 
 	$effect(() => {
@@ -43,7 +43,7 @@
 			type: 'person',
 			position: { x: 0, y: 0 },
 			draggable: false,
-			data: person,
+			data: person
 		}));
 
 		const _edges = relationships.map(({ source, target }) => ({
@@ -81,5 +81,5 @@
 </main>
 
 {#if selectedPerson}
-	<PersonModal person={selectedPerson} bind:show={showPersonModal}/>
+	<PersonDialog person={selectedPerson} bind:show={showPersonDialog} />
 {/if}
