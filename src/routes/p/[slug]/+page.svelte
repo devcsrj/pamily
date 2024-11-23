@@ -81,5 +81,18 @@
 </main>
 
 {#if selectedPerson}
-	<PersonDialog person={selectedPerson} bind:show={showPersonDialog} />
+	<PersonDialog
+		person={selectedPerson}
+		onSave={async (person) => {
+			$nodes = $nodes.map((node) => {
+				if (node.type === 'person' && node.data.id === person.id) {
+					node.data = person;
+					return node;
+				}
+				return node;
+			});
+			selectedPerson = null;
+		}}
+		bind:show={showPersonDialog}
+	/>
 {/if}

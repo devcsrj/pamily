@@ -22,10 +22,11 @@
 
 	type Params = {
 		person: Person;
+		onSave: (person: Person) => void;
 		show: boolean;
 	};
 
-	let { person, show = $bindable(false) }: Params = $props();
+	let { person, onSave, show = $bindable(false) }: Params = $props();
 
 	let dob = $state<DateValue | undefined>();
 	let dop = $state<DateValue | undefined>();
@@ -85,10 +86,35 @@
 			isCropping = false;
 		}
 	}
+
+	async function save() {
+		try {
+			const response = await fetch(`/api/people/${person.id}`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(person)
+			});
+			const body = await response.json();
+			if (response.ok) {
+				onSave(person);
+			} else {
+				if ('message' in body) {
+					errorToast(body.message);
+				} else {
+					console.error(body);
+					errorToast('Failed to save changes. Please try again later.');
+				}
+			}
+		} catch (e) {
+			console.error(e);
+			errorToast('Failed to save changes. Please try again.');
+		}
+	}
 </script>
 
 <Dialog.Root bind:open={show}>
-	<Dialog.Trigger>Open</Dialog.Trigger>
 	<Dialog.Content>
 		<Dialog.Header>
 			<Dialog.Title>Update</Dialog.Title>
@@ -178,7 +204,7 @@
 		</div>
 
 		<Dialog.Footer>
-			<Button type="submit">Save changes</Button>
+			<Button type="button" onclick={save}>Save changes</Button>
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>

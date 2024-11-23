@@ -10,11 +10,14 @@ export class SqliteLineageService implements LineageService {
 	constructor(private readonly db: Db) {}
 
 	async updatePerson(person: Person): Promise<void> {
-		await this.db
+		const result = await this.db
 			.update(nodes)
 			.set({ body: JSON.stringify(person) })
 			.where(eq(nodes.id, person.id))
 			.execute();
+		if (result.changes === 0) {
+			throw new Error(`Person not found: ${person.id}`);
+		}
 	}
 
 	async getPersonById(id: string): Promise<Person | null> {

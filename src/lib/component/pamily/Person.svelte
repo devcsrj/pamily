@@ -14,7 +14,9 @@
 
 	let noAvatar = $state(false);
 
-	const { name, avatarUrl, dateOfBirth } = data;
+	const name = $derived(data.name);
+	const avatarUrl = $derived(data.avatarUrl);
+	const dateOfBirth = $derived(data.dateOfBirth);
 	const generatedAvatar = $derived(
 		createAvatar(adventurerNeutral, {
 			seed: name
@@ -47,7 +49,7 @@
 			{/if}
 		</div>
 		<div class="ml-2 w-32">
-			<div class="text-lg font-bold">{name}</div>
+			<div class="overflow-x-clip text-ellipsis text-nowrap text-lg font-bold">{name}</div>
 			{#if age}
 				<div class="text-xs text-gray-500">{age}</div>
 			{/if}
