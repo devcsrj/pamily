@@ -8,6 +8,7 @@ export default defineConfig({
 		url: process.env.DATABASE_URL
 	},
 
+	breakpoints: true,
 	verbose: true,
 	strict: true,
 	dialect: 'sqlite'

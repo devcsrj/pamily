@@ -1,0 +1,116 @@
+{
+	"version": "6",
+	"dialect": "sqlite",
+	"id": "0fd7c2c9-27bf-471d-a18c-d03df42f0d37",
+	"prevId": "00000000-0000-0000-0000-000000000000",
+	"tables": {
+		"edges": {
+			"name": "edges",
+			"columns": {
+				"source": {
+					"name": "source",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"target": {
+					"name": "target",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"properties": {
+					"name": "properties",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				}
+			},
+			"indexes": {
+				"idx_source": {
+					"name": "idx_source",
+					"columns": ["source"],
+					"isUnique": false
+				},
+				"idx_target": {
+					"name": "idx_target",
+					"columns": ["target"],
+					"isUnique": false
+				},
+				"idx_unique_edge": {
+					"name": "idx_unique_edge",
+					"columns": ["source", "target", "properties"],
+					"isUnique": true
+				}
+			},
+			"foreignKeys": {
+				"edges_source_nodes_id_fk": {
+					"name": "edges_source_nodes_id_fk",
+					"tableFrom": "edges",
+					"tableTo": "nodes",
+					"columnsFrom": ["source"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"edges_target_nodes_id_fk": {
+					"name": "edges_target_nodes_id_fk",
+					"tableFrom": "edges",
+					"tableTo": "nodes",
+					"columnsFrom": ["target"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"nodes": {
+			"name": "nodes",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"data": {
+					"name": "data",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				}
+			},
+			"indexes": {
+				"nodes_id_unique": {
+					"name": "nodes_id_unique",
+					"columns": ["id"],
+					"isUnique": true
+				},
+				"idx_id": {
+					"name": "idx_id",
+					"columns": ["id"],
+					"isUnique": false
+				}
+			},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		}
+	},
+	"enums": {},
+	"_meta": {
+		"schemas": {},
+		"tables": {},
+		"columns": {}
+	},
+	"internal": {
+		"indexes": {}
+	}
+}
