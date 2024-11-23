@@ -62,5 +62,8 @@
 		"better-sqlite3": "^11.5.0",
 		"drizzle-orm": "^0.33.0",
 		"uid": "^2.0.2"
+	},
+	"optionalDependencies": {
+		"@rollup/rollup-linux-x64-musl": "^4.27.4"
 	}
 }
