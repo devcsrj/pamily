@@ -2,7 +2,7 @@
 
 <table><tr><td>
 
-Pamily is a small app for building a family tree. I wrote this in preparation of my family's grand 
+Pamily is a small app for building a family tree. I wrote this in preparation of my family's grand
 reunion...because I don't know who half of them are. It'll be a fun way to keep track of
 everyone.
 

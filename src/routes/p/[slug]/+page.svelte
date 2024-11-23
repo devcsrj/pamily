@@ -33,8 +33,13 @@
 	let showPersonDialog = $state(false);
 
 	function onNodeClick(e: CustomEvent<{ node: Node<PersonDto>; e: PointerEvent }>) {
+		const thisPerson = e.detail.node.data;
+		if (selectedPerson?.id === thisPerson.id) {
+			showPersonDialog = true;
+			return;
+		}
+
 		selectedPerson = e.detail.node.data;
-		showPersonDialog = true;
 	}
 
 	$effect(() => {

@@ -10,7 +10,7 @@
 		data: Person;
 	};
 
-	let { data }: Params = $props();
+	let { data, selected }: Params = $props();
 
 	let noAvatar = $state(false);
 
@@ -26,9 +26,17 @@
 </script>
 
 <div
-	class="min-h-16 rounded-md border-2 border-stone-300 bg-white p-4 shadow-md hover:shadow-teal-200"
+	class="min-h-16 rounded-md border-2 bg-white p-4 shadow-md hover:shadow-teal-200 {selected
+		? 'border-teal-500'
+		: 'border-gray-200'}"
 >
-	<Handle type="target" position={Position.Top} class="!w-6 !h-2 !rounded-none !border-none !bg-teal-500" />
+	<Handle
+		type="target"
+		position={Position.Top}
+		onconnect={(e) => console.log(e)}
+		class="!h-2 !w-6 !rounded-none !border-none !bg-teal-500"
+		id="parent"
+	/>
 	<div class="flex">
 		<div class="flex items-center justify-center rounded-full bg-gray-100">
 			{#if !avatarUrl || noAvatar}
@@ -58,6 +66,8 @@
 	<Handle
 		type="source"
 		position={Position.Bottom}
-		class="!w-6 !h-2 !rounded-none !border-none !bg-teal-500"
+		onconnect={(e) => console.log(e)}
+		class="!h-2 !w-6 !rounded-none !border-none !bg-teal-500"
+		id="child"
 	/>
 </div>
