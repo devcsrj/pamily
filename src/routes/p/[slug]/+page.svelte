@@ -9,18 +9,22 @@
 		MiniMap,
 		type Node,
 		type NodeTypes,
-		SvelteFlow
+		SvelteFlow,
+		useSvelteFlow,
+		type Viewport
 	} from '@xyflow/svelte';
 	import '@xyflow/svelte/dist/style.css';
 	import { writable } from 'svelte/store';
 	import Person from '$lib/component/pamily/Person.svelte';
 	import { type Person as PersonDto } from '$lib/types/person';
 	import { TreeLayout } from '$lib/component/xyz/tree-layout';
+	import Plus from 'lucide-svelte/icons/plus';
 	import PersonDialog from '$lib/component/pamily/PersonDialog.svelte';
-	import type { Relationship } from '$lib/types/family';
+	import { Button } from '$lib/components/ui/button';
 
 	let { data }: { data: PageData } = $props();
 
+	const familyId = $derived(data.familyId);
 	const people = $derived(data.people);
 	const relationships = $derived(data.relationships);
 
@@ -30,6 +34,7 @@
 
 	const nodes = writable<Node[]>([]);
 	const edges = writable<Edge[]>([]);
+	const { screenToFlowPosition } = useSvelteFlow();
 	const tree = new TreeLayout({
 		nodeHeight: 200,
 		nodeWidth: 300,
@@ -55,6 +60,32 @@
 		await fetch(`/api/people/${childId}/parents/${parentId}`, {
 			method: 'PUT'
 		});
+	}
+
+	async function onAddNode() {
+		const center = {
+			x: window.innerWidth / 2,
+			y: window.innerHeight / 2
+		};
+		const position = screenToFlowPosition(center);
+		console.log(position);
+
+		const res = await fetch('/api/people', {
+			method: 'POST',
+			body: JSON.stringify({ familyId })
+		});
+		if (res.ok) {
+			const person = await res.json();
+			$nodes = [
+				...$nodes,
+				{
+					id: person.id,
+					type: 'person',
+					position,
+					data: person
+				}
+			];
+		}
 	}
 
 	$effect(() => {
@@ -89,6 +120,12 @@
 		onconnect={(e) => onNodeConnect(e)}
 		on:nodeclick={(e) => onNodeClick(e)}
 	>
+		<div class="fixed bottom-5 left-1/2 z-10 translate-x-[-50%]">
+			<Button onclick={onAddNode}>
+				<Plus />
+				Person
+			</Button>
+		</div>
 		<MiniMap nodeStrokeWidth={3} />
 		<Background />
 		<Controls />

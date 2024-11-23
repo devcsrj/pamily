@@ -5,9 +5,27 @@ import type { LineageService } from './types';
 import { and, eq, inArray, like, or, sql } from 'drizzle-orm';
 import { edges, nodes } from '$lib/server/db/schema';
 import placeholder = sql.placeholder;
+import { uid } from 'uid';
 
 export class SqliteLineageService implements LineageService {
 	constructor(private readonly db: Db) {}
+
+	async addPerson(familyId: FamilyId): Promise<Person> {
+		const id = `${familyId}__${uid()}`;
+		const person: Person = {
+			id,
+			name: 'Person'
+		};
+		const inserted = await this.db
+			.insert(nodes)
+			.values({
+				id,
+				body: JSON.stringify(person)
+			})
+			.returning()
+			.execute();
+		return personSchema.parse(JSON.parse(inserted[0].body));
+	}
 
 	async addParent(childId: string, parentId: string): Promise<Relationship> {
 		return this.db.transaction(async (tx) => {

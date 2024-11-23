@@ -8,6 +8,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	const service = getLineageService();
 
 	return {
+		familyId,
 		people: await service.getPeople(familyId),
 		relationships: await service.getRelationships(familyId)
 	};

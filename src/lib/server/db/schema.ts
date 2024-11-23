@@ -1,15 +1,9 @@
 import { index, sqliteTable, text, unique } from 'drizzle-orm/sqlite-core';
-import { sql } from 'drizzle-orm';
 
 export const nodes = sqliteTable(
 	'nodes',
 	{
-		id: text('id')
-			.generatedAlwaysAs(sql`(json_extract(data, "$.id"))`, {
-				mode: 'virtual'
-			})
-			.notNull()
-			.unique(),
+		id: text('id').notNull().unique(),
 		body: text('data').notNull()
 	},
 	(table) => {

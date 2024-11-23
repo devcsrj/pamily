@@ -4,7 +4,7 @@ export const personSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	avatarUrl: z.string().nullish(),
-	dateOfBirth: z.string().date(),
+	dateOfBirth: z.string().date().nullish(),
 	dateOfDeath: z.string().date().nullish(),
 	socials: z
 		.object({
