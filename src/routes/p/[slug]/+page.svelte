@@ -10,8 +10,7 @@
 		type Node,
 		type NodeTypes,
 		SvelteFlow,
-		useSvelteFlow,
-		type Viewport
+		useSvelteFlow
 	} from '@xyflow/svelte';
 	import '@xyflow/svelte/dist/style.css';
 	import { writable } from 'svelte/store';
@@ -89,17 +88,18 @@
 	}
 
 	$effect(() => {
-		const _nodes = people.map((person) => ({
+		const _nodes: Node<PersonDto>[] = people.map((person) => ({
 			id: person.id,
 			type: 'person',
 			position: { x: 0, y: 0 },
 			data: person
 		}));
 
-		const _edges = relationships.map(({ source, target }) => ({
+		const _edges: Edge[] = relationships.map(({ source, target }) => ({
 			id: `${source}-${target}`,
 			source,
-			target
+			target,
+			type: 'smoothstep'
 		}));
 
 		tree.layout(_nodes, _edges);
@@ -114,7 +114,7 @@
 		{nodes}
 		{edges}
 		{nodeTypes}
-		fitView
+		fitView={true}
 		connectionLineType={ConnectionLineType.Step}
 		defaultEdgeOptions={{ type: 'smoothstep' }}
 		onconnect={(e) => onNodeConnect(e)}
@@ -148,3 +148,14 @@
 		bind:show={showPersonDialog}
 	/>
 {/if}
+
+<style>
+	:global(.svelte-flow__edge-path) {
+		stroke-width: 2px;
+	}
+
+	:global(g.selected .svelte-flow__edge-path) {
+		stroke: #065f46 !important;
+		stroke-width: 3px !important;
+	}
+</style>
