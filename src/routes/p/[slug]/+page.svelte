@@ -145,6 +145,10 @@
 			});
 			selectedPerson = null;
 		}}
+		onDelete={async (person) => {
+			$nodes = $nodes.filter((n) => n.type === 'person').filter((n) => n.data.id !== person.id);
+			selectedPerson = null;
+		}}
 		bind:show={showPersonDialog}
 	/>
 {/if}

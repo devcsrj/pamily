@@ -80,6 +80,16 @@ export class SqliteLineageService implements LineageService {
 		}
 	}
 
+	async removePersonById(id: string): Promise<void> {
+		return this.db.transaction(async (tx) => {
+			await tx
+				.delete(edges)
+				.where(or(eq(edges.source, id), eq(edges.target, id)))
+				.execute();
+			await tx.delete(nodes).where(eq(nodes.id, id)).execute();
+		});
+	}
+
 	async getPersonById(id: string): Promise<Person | null> {
 		const statement = this.db
 			.select()

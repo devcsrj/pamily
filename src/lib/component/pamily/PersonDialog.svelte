@@ -22,17 +22,19 @@
 
 	type Params = {
 		person: Person;
-		onSave: (person: Person) => void;
+		onSave?: (person: Person) => void;
+		onDelete?: (person: Person) => void;
 		show: boolean;
 	};
 
-	let { person, onSave, show = $bindable(false) }: Params = $props();
+	let { person, onSave, onDelete, show = $bindable(false) }: Params = $props();
 
 	let dob = $state<DateValue | undefined>();
 	let dop = $state<DateValue | undefined>();
 	let placeholder = $state<DateValue>(today(getLocalTimeZone()));
 	let fileBeingCropped = $state<File | null>(null);
 	let isCropping = $state(false);
+	let deleting = $state(false);
 
 	const df = new DateFormatter('en-US', {
 		dateStyle: 'long'
@@ -41,6 +43,7 @@
 	$effect(() => {
 		dob = person.dateOfBirth ? parseDate(person.dateOfBirth) : undefined;
 		dop = person.dateOfDeath ? parseDate(person.dateOfDeath) : undefined;
+		deleting = false;
 	});
 
 	function onFileSelect(e: Event) {
@@ -98,7 +101,7 @@
 			});
 			const body = await response.json();
 			if (response.ok) {
-				onSave(person);
+				onSave?.(person);
 			} else {
 				if ('message' in body) {
 					errorToast(body.message);
@@ -110,6 +113,30 @@
 		} catch (e) {
 			console.error(e);
 			errorToast('Failed to save changes. Please try again.');
+		}
+	}
+
+	async function remove() {
+		try {
+			const response = await fetch(`/api/people/${person.id}`, {
+				method: 'DELETE'
+			});
+			if (response.ok) {
+				onDelete?.(person);
+			} else {
+				const body = await response.json();
+				if ('message' in body) {
+					errorToast(body.message);
+				} else {
+					console.error(body);
+					errorToast('Failed to delete person. Please try again later.');
+				}
+			}
+		} catch (e) {
+			console.error(e);
+			errorToast('Failed to delete person. Please try again.');
+		} finally {
+			deleting = false;
 		}
 	}
 </script>
@@ -204,6 +231,11 @@
 		</div>
 
 		<Dialog.Footer>
+			{#if deleting}
+				<Button type="button" variant="destructive" onclick={remove}>Delete?</Button>
+			{:else}
+				<Button type="button" variant="outline" onclick={() => (deleting = true)}>Delete</Button>
+			{/if}
 			<Button type="button" onclick={save}>Save changes</Button>
 		</Dialog.Footer>
 	</Dialog.Content>

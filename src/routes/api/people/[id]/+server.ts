@@ -21,3 +21,15 @@ export const PUT: RequestHandler = async ({ params, request }) => {
 
 	return json(person);
 };
+
+export const DELETE: RequestHandler = async ({ params }) => {
+	const id = params.id;
+	if (!id) {
+		return json({ message: 'Invalid request' }, { status: 400 });
+	}
+
+	const service = getLineageService();
+	await service.removePersonById(id);
+
+	return json({ id });
+};
